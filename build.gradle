@@ -25,8 +25,9 @@ repositories {
 
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-data-mongodb')
+//    compile('org.springframework.boot:spring-boot-starter-data-mongodb')
     compile('org.springframework.boot:spring-boot-starter-webflux')
+    compile('com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.0')
     compileOnly('org.projectlombok:lombok')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('io.projectreactor:reactor-test')

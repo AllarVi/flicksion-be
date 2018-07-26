@@ -1,5 +1,6 @@
 package com.flicksion.greeting;
 
+import com.flicksion.movie.ForumCinemasRepository;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -10,8 +11,14 @@ import reactor.core.publisher.Mono;
 @Component
 public class GreetingHandler {
 
+    private final ForumCinemasRepository forumCinemasRepository;
+
+    public GreetingHandler(ForumCinemasRepository forumCinemasRepository) {
+        this.forumCinemasRepository = forumCinemasRepository;
+    }
+
     Mono<ServerResponse> hello(ServerRequest request) {
-        return ServerResponse.ok().contentType(MediaType.TEXT_PLAIN)
-                .body(BodyInserters.fromObject("Hello, Spring!"));
+        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(forumCinemasRepository.getEvents()));
     }
 }
