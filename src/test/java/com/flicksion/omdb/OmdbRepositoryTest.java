@@ -30,7 +30,7 @@ public class OmdbRepositoryTest {
     private OmdbRepository omdbRepository;
 
     @Test
-    public void findMovies() throws Exception {
+    public void shouldFindMovies() throws Exception {
         mockServer.expect(requestTo("http://www.omdbapi.com/?s=hot%20summer%20nights&apikey=8d7caf3c"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(getResource("getMoviesResponse.json"), MediaType.APPLICATION_JSON));
@@ -48,6 +48,21 @@ public class OmdbRepositoryTest {
         assertEquals("tt3416536", shortOmdbMovie1.getImdbID());
         assertEquals("movie", shortOmdbMovie1.getType());
         assertEquals("https://m.media-amazon.com/images/M/MV5BYWEzZDI3NTQtYmFlZi00N2QxLTk0MmYtMThjYjlmZmRlMmVjXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg", shortOmdbMovie1.getPoster());
+    }
+
+    @Test
+    public void shouldFindMovieByImdbID() throws Exception {
+        mockServer.expect(requestTo("http://www.omdbapi.com/?i=tt3416536&apikey=8d7caf3c"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(getResource("getMovieByImdbID.json"), MediaType.APPLICATION_JSON));
+
+        OmdbMovie result = omdbRepository.findMovie("tt3416536");
+
+        mockServer.verify();
+
+        assertEquals("tt3416536", result.getImdbID());
+        assertEquals("Hot Summer Nights", result.getTitle());
+        assertEquals("Timothée Chalamet, Maika Monroe, Alex Roe, Emory Cohen", result.getActors());
     }
 
     private String getResource(String fileName) throws IOException {
