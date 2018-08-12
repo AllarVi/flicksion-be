@@ -13,6 +13,15 @@ public class Event {
     @JacksonXmlProperty(localName = "OriginalTitle")
     private String originalTitle;
 
+    public Event() {
+    }
+
+    public Event(Builder builder) {
+        this.id = builder.id;
+        this.title = builder.title;
+        this.originalTitle = builder.originalTitle;
+    }
+
     public String getId() {
         return id;
     }
@@ -35,5 +44,37 @@ public class Event {
 
     public void setOriginalTitle(String originalTitle) {
         this.originalTitle = originalTitle;
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private String id;
+        private String title;
+        private String originalTitle;
+
+        private Builder() {
+        }
+
+        public Builder id(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder originalTitle(String originalTitle) {
+            this.originalTitle = originalTitle;
+            return this;
+        }
+
+        public Event build() {
+            return new Event(this);
+        }
     }
 }

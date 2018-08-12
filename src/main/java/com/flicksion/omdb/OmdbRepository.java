@@ -18,7 +18,7 @@ public class OmdbRepository {
         this.restTemplate = restTemplateBuilder.build();
     }
 
-    OmdbFindMoviesResponse findMovies(String searchQuery) {
+    public OmdbFindMoviesResponse findMovies(String searchQuery) {
 
         URI requestUri = UriComponentsBuilder.fromHttpUrl("http://www.omdbapi.com/")
                 .queryParam("s", searchQuery)
@@ -27,5 +27,16 @@ public class OmdbRepository {
                 .toUri();
 
         return restTemplate.getForObject(requestUri, OmdbFindMoviesResponse.class);
+    }
+
+    public OmdbMovie findMovie(String imdbID) {
+
+        URI requestUri = UriComponentsBuilder.fromHttpUrl("http://www.omdbapi.com/")
+                .queryParam("i", imdbID)
+                .queryParam("apikey", "8d7caf3c")
+                .build()
+                .toUri();
+
+        return restTemplate.getForObject(requestUri, OmdbMovie.class);
     }
 }
