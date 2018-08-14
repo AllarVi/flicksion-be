@@ -44,7 +44,7 @@ public class OmdbRepositoryTest {
 
         ShortOmdbMovie shortOmdbMovie1 = result.getSearch().get(0);
         assertEquals("Hot Summer Nights", shortOmdbMovie1.getTitle());
-        assertEquals(new Integer(2017), shortOmdbMovie1.getYear());
+        assertEquals("2017", shortOmdbMovie1.getYear());
         assertEquals("tt3416536", shortOmdbMovie1.getImdbID());
         assertEquals("movie", shortOmdbMovie1.getType());
         assertEquals("https://m.media-amazon.com/images/M/MV5BYWEzZDI3NTQtYmFlZi00N2QxLTk0MmYtMThjYjlmZmRlMmVjXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg", shortOmdbMovie1.getPoster());

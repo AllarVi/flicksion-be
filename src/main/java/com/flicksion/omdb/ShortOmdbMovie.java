@@ -9,7 +9,7 @@ public class ShortOmdbMovie {
     private String title;
 
     @JsonProperty("Year")
-    private Integer year;
+    private String year;
 
     @JsonProperty("imdbID")
     private String imdbID;
@@ -35,7 +35,7 @@ public class ShortOmdbMovie {
         return title;
     }
 
-    Integer getYear() {
+    String getYear() {
         return year;
     }
 
@@ -57,7 +57,7 @@ public class ShortOmdbMovie {
 
     public static final class Builder {
         private String title;
-        private Integer year;
+        private String year;
         private String imdbID;
         private String type;
         private String poster;
@@ -67,7 +67,7 @@ public class ShortOmdbMovie {
             return this;
         }
 
-        public Builder year(Integer year) {
+        public Builder year(String year) {
             this.year = year;
             return this;
         }
