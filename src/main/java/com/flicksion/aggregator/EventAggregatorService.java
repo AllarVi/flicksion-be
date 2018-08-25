@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.disjoint;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -29,34 +30,50 @@ public class EventAggregatorService {
         this.omdbRepository = omdbRepository;
     }
 
-    public List<String> filterEventsByActors(List<String> actors) {
-        Map<String, List<OmdbMovie>> aggregatedResults = this
-                .getAggregatedEventsWithSearchResults();
+    public List<Event> filterEventsByActors(List<String> actors) {
+        List<Event> aggregatedResults = this.getAggregatedEvents();
 
-        return aggregatedResults.entrySet().stream()
-                .filter(entry -> {
-                    List<String> actorsForMovie = actors.stream().filter(actor -> {
-                        List<OmdbMovie> moviesForActor = entry.getValue().stream()
-                                .filter(omdbMovie ->
-                                        omdbMovie.getActors().contains(actor)
-                                )
-                                .collect(toList());
-                        return moviesForActor.size() != 0;
-                    }).collect(toList());
-
-                    return actorsForMovie.size() != 0;
-                })
-                .map(Map.Entry::getKey)
+        return aggregatedResults.stream()
+                .filter(entry -> !disjoint(entry.getActors(), actors))
                 .collect(toList());
     }
 
-    public Map<String, List<OmdbMovie>> getAggregatedEventsWithSearchResults() {
-        List<ForumCinemasEvent> events = forumCinemasRepository.getEvents();
+    List<Event> getAggregatedEvents() {
+        Map<Event, List<OmdbMovie>> eventsWithSearchResults = this
+                .getEventsWithSearchResults();
 
-        Map<String, List<OmdbMovie>> aggregatedResults = new HashMap<>();
-        events.forEach(event -> {
+        return eventsWithSearchResults.entrySet().stream()
+                .map(entry -> {
+                    Event event = entry.getKey();
+                    List<OmdbMovie> searchResults = entry.getValue();
+
+                    // TODO: Match search results by more relevant criteria
+                    List<OmdbMovie> matchingMovies = searchResults.stream()
+                            .filter(movie -> event.getYear().equals(movie.getYear()))
+                            .collect(toList());
+
+                    if (matchingMovies.size() < 1) {
+                        return event;
+                    }
+
+                    OmdbMovie firstMatchingMovie = matchingMovies.get(0);
+
+                    // TODO: Aggregate more info from omdb entity into event
+                    event.setActors(firstMatchingMovie.getActors());
+
+                    return event;
+                })
+                .collect(toList());
+    }
+
+    // TODO: Get events from more sources
+    public Map<Event, List<OmdbMovie>> getEventsWithSearchResults() {
+        List<ForumCinemasEvent> forumCinemasEvents = forumCinemasRepository.getEvents();
+
+        Map<Event, List<OmdbMovie>> eventsSearchResults = new HashMap<>();
+        forumCinemasEvents.forEach(forumCinemasEvent -> {
             OmdbFindMoviesResponse response = omdbRepository
-                    .findMovies(event.getOriginalTitle());
+                    .findMovies(forumCinemasEvent.getOriginalTitle());
 
             List<OmdbMovie> fullMovies = new ArrayList<>();
             if (response.getSearch() != null) {
@@ -65,9 +82,14 @@ public class EventAggregatorService {
                         .collect(toList());
             }
 
-            aggregatedResults.put(event.getId(), fullMovies);
+            Event event = Event.newBuilder()
+                    .originalTitle(forumCinemasEvent.getOriginalTitle())
+                    .year(forumCinemasEvent.getProductionYear())
+                    .build();
+
+            eventsSearchResults.put(event, fullMovies);
         });
 
-        return aggregatedResults;
+        return eventsSearchResults;
     }
 }

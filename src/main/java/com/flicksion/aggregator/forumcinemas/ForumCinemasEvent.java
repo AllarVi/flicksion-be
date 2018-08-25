@@ -12,6 +12,8 @@ public class ForumCinemasEvent {
     private String title;
     @JacksonXmlProperty(localName = "OriginalTitle")
     private String originalTitle;
+    @JacksonXmlProperty(localName = "ProductionYear")
+    private String productionYear;
 
     public ForumCinemasEvent() {
     }
@@ -20,6 +22,7 @@ public class ForumCinemasEvent {
         this.id = builder.id;
         this.title = builder.title;
         this.originalTitle = builder.originalTitle;
+        this.productionYear = builder.productionYear;
     }
 
     public String getId() {
@@ -46,6 +49,10 @@ public class ForumCinemasEvent {
         this.originalTitle = originalTitle;
     }
 
+    public String getProductionYear() {
+        return productionYear;
+    }
+
     public static Builder newBuilder() {
         return new Builder();
     }
@@ -54,6 +61,7 @@ public class ForumCinemasEvent {
         private String id;
         private String title;
         private String originalTitle;
+        private String productionYear;
 
         private Builder() {
         }
@@ -70,6 +78,11 @@ public class ForumCinemasEvent {
 
         public Builder originalTitle(String originalTitle) {
             this.originalTitle = originalTitle;
+            return this;
+        }
+
+        public Builder productionYear(String productionYear) {
+            this.productionYear = productionYear;
             return this;
         }
 

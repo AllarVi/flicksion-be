@@ -2,6 +2,10 @@ package com.flicksion.aggregator.omdb;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
+import static java.util.Arrays.asList;
+
 public class OmdbMovie {
 
     @JsonProperty("imdbID")
@@ -11,7 +15,10 @@ public class OmdbMovie {
     private String title;
 
     @JsonProperty("Actors")
-    private String actors;
+    private List<String> actors;
+
+    @JsonProperty("Year")
+    private String year;
 
     public OmdbMovie() {
     }
@@ -20,6 +27,7 @@ public class OmdbMovie {
         this.imdbID = builder.imdbID;
         this.title = builder.title;
         this.actors = builder.actors;
+        this.year = builder.year;
     }
 
     public String getImdbID() {
@@ -30,8 +38,16 @@ public class OmdbMovie {
         return title;
     }
 
-    public String getActors() {
+    public List<String> getActors() {
         return actors;
+    }
+
+    public List<String> setActors(String actors) {
+        return this.actors = asList(actors.trim().split("\\s*,\\s*"));
+    }
+
+    public String getYear() {
+        return year;
     }
 
     public static Builder newBuilder() {
@@ -41,7 +57,8 @@ public class OmdbMovie {
     public static final class Builder {
         private String imdbID;
         private String title;
-        private String actors;
+        private List<String> actors;
+        private String year;
 
         public Builder imdbID(String imdbID) {
             this.imdbID = imdbID;
@@ -53,8 +70,13 @@ public class OmdbMovie {
             return this;
         }
 
-        public Builder actors(String actors) {
+        public Builder actors(List<String> actors) {
             this.actors = actors;
+            return this;
+        }
+
+        public Builder year(String year) {
+            this.year = year;
             return this;
         }
 

@@ -1,6 +1,5 @@
 package com.flicksion.aggregator;
 
-import com.flicksion.aggregator.EventAggregatorService;
 import com.flicksion.aggregator.forumcinemas.ForumCinemasEvent;
 import com.flicksion.aggregator.forumcinemas.ForumCinemasRepository;
 import com.flicksion.aggregator.omdb.OmdbFindMoviesResponse;
@@ -70,7 +69,7 @@ public class EventAggregatorServiceTest {
                 .build());
 
         OmdbMovie omdbMovie = OmdbMovie.newBuilder()
-                .actors("Henry Cavill")
+                .actors(singletonList("Henry Cavill"))
                 .build();
 
         when(omdbRepository.findMovie("imdbId1")).thenReturn(omdbMovie);
@@ -78,14 +77,14 @@ public class EventAggregatorServiceTest {
 
     @Test
     public void shouldFetchMoviesFromCinema() {
-        eventAggregatorService.getAggregatedEventsWithSearchResults();
+        eventAggregatorService.getEventsWithSearchResults();
 
         verify(forumCinemasRepository, times(1)).getEvents();
     }
 
     @Test
     public void shouldContainEvents() {
-        eventAggregatorService.getAggregatedEventsWithSearchResults();
+        eventAggregatorService.getEventsWithSearchResults();
 
         verify(omdbRepository, times(1)).findMovies("Superman");
         verify(omdbRepository, times(1)).findMovies("Batman Begins");
@@ -93,7 +92,7 @@ public class EventAggregatorServiceTest {
 
     @Test
     public void shouldFetchFullMovies() {
-        eventAggregatorService.getAggregatedEventsWithSearchResults();
+        eventAggregatorService.getEventsWithSearchResults();
 
         verify(omdbRepository, times(1)).findMovie("imdbId1");
         verify(omdbRepository, times(1)).findMovie("imdbId2");
@@ -101,39 +100,79 @@ public class EventAggregatorServiceTest {
 
     @Test
     public void shouldReturnAggregatedResults() {
-        Map<String, List<OmdbMovie>> results = eventAggregatorService
-                .getAggregatedEventsWithSearchResults();
+        Map<Event, List<OmdbMovie>> results = eventAggregatorService
+                .getEventsWithSearchResults();
 
         assertEquals(2, results.size());
-        assertEquals(2, results.get("id2").size());
-        assertEquals("Henry Cavill", results.get("id2").get(0).getActors());
+        results.forEach((key, value) -> {
+            if (key.getOriginalTitle().equals("Superman")) {
+                assertEquals(singletonList("Henry Cavill"), value.get(0).getActors());
+            }
+        });
     }
 
     @Test
     public void shouldFetchMoviesWhenFilteringByActors() {
-        Map<String, List<OmdbMovie>> aggregatedResults = new HashMap<String, List<OmdbMovie>>() {
+        List<Event> aggregatedResults = asList(
+                Event.newBuilder()
+                        .originalTitle("Man of Steel")
+                        .actors(singletonList("Henry Cavill"))
+                        .build(),
+                Event.newBuilder()
+                        .originalTitle("Da Vinci Code")
+                        .actors(singletonList("Tom Hanks"))
+                        .build()
+        );
+
+        EventAggregatorService eventAggregatorServiceMock = mock(EventAggregatorService.class);
+        when(eventAggregatorServiceMock.filterEventsByActors(any())).thenCallRealMethod();
+        doReturn(aggregatedResults).when(eventAggregatorServiceMock).getAggregatedEvents();
+
+        List<Event> movies = eventAggregatorServiceMock
+                .filterEventsByActors(asList("Tom Hanks", "Madonna"));
+
+        verify(eventAggregatorServiceMock, times(1))
+                .getAggregatedEvents();
+
+        assertEquals(1, movies.size());
+        assertEquals("Da Vinci Code", movies.get(0).getOriginalTitle());
+    }
+
+    @Test
+    public void shouldAggregateEventWithCorrespondingSearchResult() {
+        Map<Event, List<OmdbMovie>> eventsWithSearchResults = new HashMap<Event, List<OmdbMovie>>() {
             {
-                put("eventId100", singletonList(OmdbMovie.newBuilder()
-                        .actors("Henry Cavill")
-                        .build()));
-                put("eventId101", singletonList(OmdbMovie.newBuilder()
-                        .actors("Tom Hanks")
-                        .build()));
+                put(Event.newBuilder()
+                                .originalTitle("Superman")
+                                .year("2013")
+                                .build(),
+                        asList(
+                                OmdbMovie.newBuilder()
+                                        .actors(singletonList("Henry Cavill"))
+                                        .year("2013")
+                                        .build(),
+                                OmdbMovie.newBuilder()
+                                        .actors(singletonList("Tom Hanks"))
+                                        .year("2006")
+                                        .build()));
             }
         };
 
         EventAggregatorService eventAggregatorServiceMock = mock(EventAggregatorService.class);
-        when(eventAggregatorServiceMock.filterEventsByActors(any())).thenCallRealMethod();
-        doReturn(aggregatedResults).when(eventAggregatorServiceMock).getAggregatedEventsWithSearchResults();
+        when(eventAggregatorServiceMock.getAggregatedEvents()).thenCallRealMethod();
+        doReturn(eventsWithSearchResults).when(eventAggregatorServiceMock)
+                .getEventsWithSearchResults();
 
-        List<String> movies = eventAggregatorServiceMock
-                .filterEventsByActors(asList("Tom Hanks", "Madonna"));
+        List<Event> events = eventAggregatorServiceMock
+                .getAggregatedEvents();
 
         verify(eventAggregatorServiceMock, times(1))
-                .getAggregatedEventsWithSearchResults();
+                .getEventsWithSearchResults();
 
-        assertEquals(1, movies.size());
-        assertEquals("eventId101", movies.get(0));
+        assertEquals(singletonList("Henry Cavill"), events.get(0).getActors());
+        assertEquals("Superman", events.get(0).getOriginalTitle());
+        assertEquals("2013", events.get(0).getYear());
+
     }
 
 }
