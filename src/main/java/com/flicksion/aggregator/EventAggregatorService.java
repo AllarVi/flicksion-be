@@ -1,26 +1,30 @@
-package com.flicksion.movie;
+package com.flicksion.aggregator;
 
-import com.flicksion.omdb.OmdbFindMoviesResponse;
-import com.flicksion.omdb.OmdbMovie;
-import com.flicksion.omdb.OmdbRepository;
+import com.flicksion.aggregator.forumcinemas.ForumCinemasEvent;
+import com.flicksion.aggregator.forumcinemas.ForumCinemasRepository;
+import com.flicksion.aggregator.omdb.OmdbFindMoviesResponse;
+import com.flicksion.aggregator.omdb.OmdbMovie;
+import com.flicksion.aggregator.omdb.OmdbRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 @Service
-public class MovieService {
+public class EventAggregatorService {
 
     private final ForumCinemasRepository forumCinemasRepository;
 
     private final OmdbRepository omdbRepository;
 
     @Autowired
-    public MovieService(ForumCinemasRepository forumCinemasRepository,
-                        OmdbRepository omdbRepository) {
+    public EventAggregatorService(ForumCinemasRepository forumCinemasRepository,
+                                  OmdbRepository omdbRepository) {
         this.forumCinemasRepository = forumCinemasRepository;
         this.omdbRepository = omdbRepository;
     }
@@ -47,7 +51,7 @@ public class MovieService {
     }
 
     public Map<String, List<OmdbMovie>> getAggregatedEventsWithSearchResults() {
-        List<Event> events = forumCinemasRepository.getEvents();
+        List<ForumCinemasEvent> events = forumCinemasRepository.getEvents();
 
         Map<String, List<OmdbMovie>> aggregatedResults = new HashMap<>();
         events.forEach(event -> {

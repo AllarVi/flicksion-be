@@ -1,9 +1,12 @@
-package com.flicksion.movie;
+package com.flicksion.aggregator;
 
-import com.flicksion.omdb.OmdbFindMoviesResponse;
-import com.flicksion.omdb.OmdbMovie;
-import com.flicksion.omdb.OmdbRepository;
-import com.flicksion.omdb.ShortOmdbMovie;
+import com.flicksion.aggregator.EventAggregatorService;
+import com.flicksion.aggregator.forumcinemas.ForumCinemasEvent;
+import com.flicksion.aggregator.forumcinemas.ForumCinemasRepository;
+import com.flicksion.aggregator.omdb.OmdbFindMoviesResponse;
+import com.flicksion.aggregator.omdb.OmdbMovie;
+import com.flicksion.aggregator.omdb.OmdbRepository;
+import com.flicksion.aggregator.omdb.ShortOmdbMovie;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +25,7 @@ import static org.mockito.Mockito.*;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class MovieServiceTest {
+public class EventAggregatorServiceTest {
 
     @Mock
     private ForumCinemasRepository forumCinemasRepository;
@@ -30,18 +33,18 @@ public class MovieServiceTest {
     @Mock
     private OmdbRepository omdbRepository;
 
-    private MovieService movieService;
+    private EventAggregatorService eventAggregatorService;
 
     @Before
     public void setUp() {
-        movieService = new MovieService(forumCinemasRepository, omdbRepository);
+        eventAggregatorService = new EventAggregatorService(forumCinemasRepository, omdbRepository);
 
-        List<Event> events = asList(
-                Event.newBuilder()
+        List<ForumCinemasEvent> events = asList(
+                ForumCinemasEvent.newBuilder()
                         .id("id1")
                         .originalTitle("Batman Begins")
                         .build(),
-                Event.newBuilder()
+                ForumCinemasEvent.newBuilder()
                         .id("id2")
                         .originalTitle("Superman")
                         .build()
@@ -75,14 +78,14 @@ public class MovieServiceTest {
 
     @Test
     public void shouldFetchMoviesFromCinema() {
-        movieService.getAggregatedEventsWithSearchResults();
+        eventAggregatorService.getAggregatedEventsWithSearchResults();
 
         verify(forumCinemasRepository, times(1)).getEvents();
     }
 
     @Test
     public void shouldContainEvents() {
-        movieService.getAggregatedEventsWithSearchResults();
+        eventAggregatorService.getAggregatedEventsWithSearchResults();
 
         verify(omdbRepository, times(1)).findMovies("Superman");
         verify(omdbRepository, times(1)).findMovies("Batman Begins");
@@ -90,7 +93,7 @@ public class MovieServiceTest {
 
     @Test
     public void shouldFetchFullMovies() {
-        movieService.getAggregatedEventsWithSearchResults();
+        eventAggregatorService.getAggregatedEventsWithSearchResults();
 
         verify(omdbRepository, times(1)).findMovie("imdbId1");
         verify(omdbRepository, times(1)).findMovie("imdbId2");
@@ -98,7 +101,7 @@ public class MovieServiceTest {
 
     @Test
     public void shouldReturnAggregatedResults() {
-        Map<String, List<OmdbMovie>> results = movieService
+        Map<String, List<OmdbMovie>> results = eventAggregatorService
                 .getAggregatedEventsWithSearchResults();
 
         assertEquals(2, results.size());
@@ -119,14 +122,14 @@ public class MovieServiceTest {
             }
         };
 
-        MovieService movieServiceMock = mock(MovieService.class);
-        when(movieServiceMock.filterEventsByActors(any())).thenCallRealMethod();
-        doReturn(aggregatedResults).when(movieServiceMock).getAggregatedEventsWithSearchResults();
+        EventAggregatorService eventAggregatorServiceMock = mock(EventAggregatorService.class);
+        when(eventAggregatorServiceMock.filterEventsByActors(any())).thenCallRealMethod();
+        doReturn(aggregatedResults).when(eventAggregatorServiceMock).getAggregatedEventsWithSearchResults();
 
-        List<String> movies = movieServiceMock
+        List<String> movies = eventAggregatorServiceMock
                 .filterEventsByActors(asList("Tom Hanks", "Madonna"));
 
-        verify(movieServiceMock, times(1))
+        verify(eventAggregatorServiceMock, times(1))
                 .getAggregatedEventsWithSearchResults();
 
         assertEquals(1, movies.size());

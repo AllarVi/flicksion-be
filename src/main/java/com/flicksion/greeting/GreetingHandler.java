@@ -1,6 +1,6 @@
 package com.flicksion.greeting;
 
-import com.flicksion.movie.MovieService;
+import com.flicksion.aggregator.EventAggregatorService;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -11,15 +11,15 @@ import reactor.core.publisher.Mono;
 @Component
 public class GreetingHandler {
 
-    private final MovieService movieService;
+    private final EventAggregatorService eventAggregatorService;
 
-    public GreetingHandler(MovieService movieService) {
-        this.movieService = movieService;
+    public GreetingHandler(EventAggregatorService eventAggregatorService) {
+        this.eventAggregatorService = eventAggregatorService;
     }
 
     Mono<ServerResponse> hello(ServerRequest request) {
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromObject(movieService
+                .body(BodyInserters.fromObject(eventAggregatorService
                         .getAggregatedEventsWithSearchResults()));
     }
 }

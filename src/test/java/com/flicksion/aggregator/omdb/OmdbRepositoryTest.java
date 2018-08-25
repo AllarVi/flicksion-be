@@ -1,4 +1,4 @@
-package com.flicksion.omdb;
+package com.flicksion.aggregator.omdb;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;

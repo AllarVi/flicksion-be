@@ -1,10 +1,10 @@
-package com.flicksion.movie;
+package com.flicksion.aggregator.forumcinemas;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 @JacksonXmlRootElement(localName = "Events")
-public class Event {
+public class ForumCinemasEvent {
 
     @JacksonXmlProperty(localName = "ID")
     private String id;
@@ -13,10 +13,10 @@ public class Event {
     @JacksonXmlProperty(localName = "OriginalTitle")
     private String originalTitle;
 
-    public Event() {
+    public ForumCinemasEvent() {
     }
 
-    public Event(Builder builder) {
+    public ForumCinemasEvent(Builder builder) {
         this.id = builder.id;
         this.title = builder.title;
         this.originalTitle = builder.originalTitle;
@@ -73,8 +73,8 @@ public class Event {
             return this;
         }
 
-        public Event build() {
-            return new Event(this);
+        public ForumCinemasEvent build() {
+            return new ForumCinemasEvent(this);
         }
     }
 }

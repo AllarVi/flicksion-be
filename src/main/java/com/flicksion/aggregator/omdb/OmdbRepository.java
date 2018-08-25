@@ -1,4 +1,4 @@
-package com.flicksion.omdb;
+package com.flicksion.aggregator.omdb;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
