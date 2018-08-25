@@ -1,4 +1,4 @@
-package com.flicksion.movie;
+package com.flicksion.aggregator.forumcinemas;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
@@ -11,9 +11,9 @@ import static java.util.Arrays.asList;
 @Repository
 public class ForumCinemasRepository {
 
-    public List<Event> getEvents() {
+    public List<ForumCinemasEvent> getEvents() {
         RestTemplate restTemplate = new RestTemplate();
-        Event[] events = restTemplate.getForObject("https://www.forumcinemas.ee/xml/Events", Event[].class, 200);
+        ForumCinemasEvent[] events = restTemplate.getForObject("https://www.forumcinemas.ee/xml/Events", ForumCinemasEvent[].class, 200);
 
         return new ArrayList<>(asList(events));
     }

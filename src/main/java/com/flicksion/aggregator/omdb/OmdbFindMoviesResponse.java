@@ -1,4 +1,4 @@
-package com.flicksion.omdb;
+package com.flicksion.aggregator.omdb;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

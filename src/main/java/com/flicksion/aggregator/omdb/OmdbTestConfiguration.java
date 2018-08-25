@@ -1,4 +1,4 @@
-package com.flicksion.omdb;
+package com.flicksion.aggregator.omdb;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

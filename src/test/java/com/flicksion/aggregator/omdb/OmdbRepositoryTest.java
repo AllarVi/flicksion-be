@@ -1,4 +1,4 @@
-package com.flicksion.omdb;
+package com.flicksion.aggregator.omdb;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -13,7 +13,9 @@ import org.springframework.test.web.client.MockRestServiceServer;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -62,7 +64,8 @@ public class OmdbRepositoryTest {
 
         assertEquals("tt3416536", result.getImdbID());
         assertEquals("Hot Summer Nights", result.getTitle());
-        assertEquals("Timothée Chalamet, Maika Monroe, Alex Roe, Emory Cohen", result.getActors());
+        List<String> expected = asList("Timothée Chalamet", "Maika Monroe", "Alex Roe", "Emory Cohen");
+        assertEquals(expected, result.getActors());
     }
 
     private String getResource(String fileName) throws IOException {

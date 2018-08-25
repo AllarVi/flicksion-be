@@ -1,10 +1,10 @@
-package com.flicksion.movie;
+package com.flicksion.aggregator.forumcinemas;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 @JacksonXmlRootElement(localName = "Events")
-public class Event {
+public class ForumCinemasEvent {
 
     @JacksonXmlProperty(localName = "ID")
     private String id;
@@ -12,14 +12,17 @@ public class Event {
     private String title;
     @JacksonXmlProperty(localName = "OriginalTitle")
     private String originalTitle;
+    @JacksonXmlProperty(localName = "ProductionYear")
+    private String productionYear;
 
-    public Event() {
+    public ForumCinemasEvent() {
     }
 
-    public Event(Builder builder) {
+    public ForumCinemasEvent(Builder builder) {
         this.id = builder.id;
         this.title = builder.title;
         this.originalTitle = builder.originalTitle;
+        this.productionYear = builder.productionYear;
     }
 
     public String getId() {
@@ -46,6 +49,10 @@ public class Event {
         this.originalTitle = originalTitle;
     }
 
+    public String getProductionYear() {
+        return productionYear;
+    }
+
     public static Builder newBuilder() {
         return new Builder();
     }
@@ -54,6 +61,7 @@ public class Event {
         private String id;
         private String title;
         private String originalTitle;
+        private String productionYear;
 
         private Builder() {
         }
@@ -73,8 +81,13 @@ public class Event {
             return this;
         }
 
-        public Event build() {
-            return new Event(this);
+        public Builder productionYear(String productionYear) {
+            this.productionYear = productionYear;
+            return this;
+        }
+
+        public ForumCinemasEvent build() {
+            return new ForumCinemasEvent(this);
         }
     }
 }
