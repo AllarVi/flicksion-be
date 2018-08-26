@@ -135,7 +135,7 @@ public class EventAggregatorServiceTest {
 
     @Test
     public void shouldAggregateEventWithCorrespondingSearchResult() {
-        Map<Event, List<OmdbMovie>> eventsWithSearchResults = new HashMap<>() {
+        Map<Event, List<OmdbMovie>> eventsWithSearchResults = new HashMap<Event, List<OmdbMovie>>() {
             {
                 put(Event.newBuilder()
                                 .originalTitle("Superman")
