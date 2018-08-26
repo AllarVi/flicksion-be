@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -42,6 +41,7 @@ public class EventAggregatorServiceTest {
                 ForumCinemasEvent.newBuilder()
                         .id("id1")
                         .originalTitle("Batman Begins")
+                        .eventType("Movie")
                         .build(),
                 ForumCinemasEvent.newBuilder()
                         .id("id2")
@@ -60,12 +60,8 @@ public class EventAggregatorServiceTest {
                         .build()
         );
 
-        when(omdbRepository.findMovies("Superman")).thenReturn(OmdbFindMoviesResponse.newBuilder()
-                .search(shortOmdbMovies)
-                .build());
-
         when(omdbRepository.findMovies("Batman Begins")).thenReturn(OmdbFindMoviesResponse.newBuilder()
-                .search(emptyList())
+                .search(shortOmdbMovies)
                 .build());
 
         OmdbMovie omdbMovie = OmdbMovie.newBuilder()
@@ -86,7 +82,6 @@ public class EventAggregatorServiceTest {
     public void shouldContainEvents() {
         eventAggregatorService.getEventsWithSearchResults();
 
-        verify(omdbRepository, times(1)).findMovies("Superman");
         verify(omdbRepository, times(1)).findMovies("Batman Begins");
     }
 
@@ -103,7 +98,7 @@ public class EventAggregatorServiceTest {
         Map<Event, List<OmdbMovie>> results = eventAggregatorService
                 .getEventsWithSearchResults();
 
-        assertEquals(2, results.size());
+        assertEquals(1, results.size());
         results.forEach((key, value) -> {
             if (key.getOriginalTitle().equals("Superman")) {
                 assertEquals(singletonList("Henry Cavill"), value.get(0).getActors());
@@ -174,5 +169,4 @@ public class EventAggregatorServiceTest {
         assertEquals("2013", events.get(0).getYear());
 
     }
-
 }

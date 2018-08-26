@@ -1,11 +1,12 @@
 package com.flicksion.aggregator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Event {
 
-    private List<String> actors;
     private String originalTitle;
+    private List<String> actors;
     private String year;
 
     public Event() {
@@ -39,7 +40,7 @@ public class Event {
 
     public static final class Builder {
         private String originalTitle;
-        private List<String> actors;
+        private List<String> actors = new ArrayList<>();
         private String year;
 
         private Builder() {

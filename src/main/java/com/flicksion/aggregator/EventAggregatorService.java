@@ -38,7 +38,7 @@ public class EventAggregatorService {
                 .collect(toList());
     }
 
-    List<Event> getAggregatedEvents() {
+    public List<Event> getAggregatedEvents() {
         Map<Event, List<OmdbMovie>> eventsWithSearchResults = this
                 .getEventsWithSearchResults();
 
@@ -71,24 +71,27 @@ public class EventAggregatorService {
         List<ForumCinemasEvent> forumCinemasEvents = forumCinemasRepository.getEvents();
 
         Map<Event, List<OmdbMovie>> eventsSearchResults = new HashMap<>();
-        forumCinemasEvents.forEach(forumCinemasEvent -> {
-            OmdbFindMoviesResponse response = omdbRepository
-                    .findMovies(forumCinemasEvent.getOriginalTitle());
+        forumCinemasEvents.stream()
+                .filter(event -> "Movie".equals(event.getEventType()))
+                .forEach(forumCinemasEvent -> {
+                    OmdbFindMoviesResponse response = omdbRepository
+                            .findMovies(forumCinemasEvent.getOriginalTitle());
 
-            List<OmdbMovie> fullMovies = new ArrayList<>();
-            if (response.getSearch() != null) {
-                fullMovies = response.getSearch().stream()
-                        .map(shortOmdbMovie -> omdbRepository.findMovie(shortOmdbMovie.getImdbID()))
-                        .collect(toList());
-            }
+                    List<OmdbMovie> fullMovies = new ArrayList<>();
+                    if (response.getSearch() != null) {
+                        fullMovies = response.getSearch().stream()
+                                .map(shortOmdbMovie -> omdbRepository
+                                        .findMovie(shortOmdbMovie.getImdbID()))
+                                .collect(toList());
+                    }
 
-            Event event = Event.newBuilder()
-                    .originalTitle(forumCinemasEvent.getOriginalTitle())
-                    .year(forumCinemasEvent.getProductionYear())
-                    .build();
+                    Event event = Event.newBuilder()
+                            .originalTitle(forumCinemasEvent.getOriginalTitle())
+                            .year(forumCinemasEvent.getProductionYear())
+                            .build();
 
-            eventsSearchResults.put(event, fullMovies);
-        });
+                    eventsSearchResults.put(event, fullMovies);
+                });
 
         return eventsSearchResults;
     }

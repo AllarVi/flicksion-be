@@ -20,6 +20,6 @@ public class GreetingHandler {
     Mono<ServerResponse> hello(ServerRequest request) {
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromObject(eventAggregatorService
-                        .getEventsWithSearchResults()));
+                        .getAggregatedEvents()));
     }
 }
