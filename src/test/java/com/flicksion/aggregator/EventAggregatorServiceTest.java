@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -170,11 +169,4 @@ public class EventAggregatorServiceTest {
         assertEquals("2013", events.get(0).getYear());
 
     }
-
-    @Test
-    public void shouldFetchOnlyMovies() {
-
-
-    }
-
 }

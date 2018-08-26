@@ -80,7 +80,8 @@ public class EventAggregatorService {
                     List<OmdbMovie> fullMovies = new ArrayList<>();
                     if (response.getSearch() != null) {
                         fullMovies = response.getSearch().stream()
-                                .map(shortOmdbMovie -> omdbRepository.findMovie(shortOmdbMovie.getImdbID()))
+                                .map(shortOmdbMovie -> omdbRepository
+                                        .findMovie(shortOmdbMovie.getImdbID()))
                                 .collect(toList());
                     }
 
