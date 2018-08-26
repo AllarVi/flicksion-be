@@ -8,6 +8,10 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
+
+import static java.util.Collections.singletonList;
+
 @Component
 public class GreetingHandler {
 
@@ -20,6 +24,6 @@ public class GreetingHandler {
     Mono<ServerResponse> hello(ServerRequest request) {
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromObject(eventAggregatorService
-                        .getEventsWithSearchResults()));
+                        .getAggregatedEvents()));
     }
 }

@@ -42,6 +42,7 @@ public class EventAggregatorServiceTest {
                 ForumCinemasEvent.newBuilder()
                         .id("id1")
                         .originalTitle("Batman Begins")
+                        .eventType("Movie")
                         .build(),
                 ForumCinemasEvent.newBuilder()
                         .id("id2")
@@ -60,12 +61,8 @@ public class EventAggregatorServiceTest {
                         .build()
         );
 
-        when(omdbRepository.findMovies("Superman")).thenReturn(OmdbFindMoviesResponse.newBuilder()
-                .search(shortOmdbMovies)
-                .build());
-
         when(omdbRepository.findMovies("Batman Begins")).thenReturn(OmdbFindMoviesResponse.newBuilder()
-                .search(emptyList())
+                .search(shortOmdbMovies)
                 .build());
 
         OmdbMovie omdbMovie = OmdbMovie.newBuilder()
@@ -86,7 +83,6 @@ public class EventAggregatorServiceTest {
     public void shouldContainEvents() {
         eventAggregatorService.getEventsWithSearchResults();
 
-        verify(omdbRepository, times(1)).findMovies("Superman");
         verify(omdbRepository, times(1)).findMovies("Batman Begins");
     }
 
@@ -103,7 +99,7 @@ public class EventAggregatorServiceTest {
         Map<Event, List<OmdbMovie>> results = eventAggregatorService
                 .getEventsWithSearchResults();
 
-        assertEquals(2, results.size());
+        assertEquals(1, results.size());
         results.forEach((key, value) -> {
             if (key.getOriginalTitle().equals("Superman")) {
                 assertEquals(singletonList("Henry Cavill"), value.get(0).getActors());
@@ -140,7 +136,7 @@ public class EventAggregatorServiceTest {
 
     @Test
     public void shouldAggregateEventWithCorrespondingSearchResult() {
-        Map<Event, List<OmdbMovie>> eventsWithSearchResults = new HashMap<Event, List<OmdbMovie>>() {
+        Map<Event, List<OmdbMovie>> eventsWithSearchResults = new HashMap<>() {
             {
                 put(Event.newBuilder()
                                 .originalTitle("Superman")
@@ -172,6 +168,12 @@ public class EventAggregatorServiceTest {
         assertEquals(singletonList("Henry Cavill"), events.get(0).getActors());
         assertEquals("Superman", events.get(0).getOriginalTitle());
         assertEquals("2013", events.get(0).getYear());
+
+    }
+
+    @Test
+    public void shouldFetchOnlyMovies() {
+
 
     }
 
