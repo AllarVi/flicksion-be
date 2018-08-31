@@ -12,7 +12,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @RunWith(SpringRunner.class)
 //  We create a `@SpringBootTest`, starting an actual server on a `RANDOM_PORT`
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class GreetingRouterTest {
+public class EventsRouterTest {
 
     // Spring Boot will create a `WebTestClient` for you,
     // already configure and ready to issue requests against "localhost:RANDOM_PORT"
@@ -24,7 +24,7 @@ public class GreetingRouterTest {
     public void testHello() {
         webTestClient
                 // Create a GET request to test an endpoint
-                .get().uri("/hello")
+                .get().uri("/events")
                 .accept(MediaType.TEXT_PLAIN)
                 .exchange()
                 // and use the dedicated DSL to test assertions against the response

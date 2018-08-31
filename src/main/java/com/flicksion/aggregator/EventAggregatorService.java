@@ -8,10 +8,7 @@ import com.flicksion.aggregator.omdb.OmdbRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Collections.disjoint;
 import static java.util.stream.Collectors.toList;
@@ -30,15 +27,15 @@ public class EventAggregatorService {
         this.omdbRepository = omdbRepository;
     }
 
-    public List<Event> filterEventsByActors(List<String> actors) {
-        List<Event> aggregatedResults = this.getAggregatedEvents();
+    public List<Event> getEventsByActors(Set<String> actors) {
+        List<Event> aggregatedResults = this.getEvents();
 
         return aggregatedResults.stream()
                 .filter(entry -> !disjoint(entry.getActors(), actors))
                 .collect(toList());
     }
 
-    public List<Event> getAggregatedEvents() {
+    public List<Event> getEvents() {
         Map<Event, List<OmdbMovie>> eventsWithSearchResults = this
                 .getEventsWithSearchResults();
 

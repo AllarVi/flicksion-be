@@ -66,4 +66,10 @@ public class Event {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Event{" +
+                "originalTitle='" + originalTitle + '\'' +
+                '}';
+    }
 }
