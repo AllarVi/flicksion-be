@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.hibernate.validator.internal.util.CollectionHelper.asSet;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -120,14 +121,14 @@ public class EventAggregatorServiceTest {
         );
 
         EventAggregatorService eventAggregatorServiceMock = mock(EventAggregatorService.class);
-        when(eventAggregatorServiceMock.filterEventsByActors(any())).thenCallRealMethod();
-        doReturn(aggregatedResults).when(eventAggregatorServiceMock).getAggregatedEvents();
+        when(eventAggregatorServiceMock.getEventsByActors(any())).thenCallRealMethod();
+        doReturn(aggregatedResults).when(eventAggregatorServiceMock).getEvents();
 
         List<Event> movies = eventAggregatorServiceMock
-                .filterEventsByActors(asList("Tom Hanks", "Madonna"));
+                .getEventsByActors(asSet("Tom Hanks", "Madonna"));
 
         verify(eventAggregatorServiceMock, times(1))
-                .getAggregatedEvents();
+                .getEvents();
 
         assertEquals(1, movies.size());
         assertEquals("Da Vinci Code", movies.get(0).getOriginalTitle());
@@ -154,12 +155,12 @@ public class EventAggregatorServiceTest {
         };
 
         EventAggregatorService eventAggregatorServiceMock = mock(EventAggregatorService.class);
-        when(eventAggregatorServiceMock.getAggregatedEvents()).thenCallRealMethod();
+        when(eventAggregatorServiceMock.getEvents()).thenCallRealMethod();
         doReturn(eventsWithSearchResults).when(eventAggregatorServiceMock)
                 .getEventsWithSearchResults();
 
         List<Event> events = eventAggregatorServiceMock
-                .getAggregatedEvents();
+                .getEvents();
 
         verify(eventAggregatorServiceMock, times(1))
                 .getEventsWithSearchResults();
